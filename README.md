@@ -26,7 +26,7 @@ Springboot default uses Tomcat as the embeded container. This project use such c
 		<exclusion>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			</exclusion>
+		</exclusion>
 	</exclusions>
 </dependency>
 <dependency>
@@ -71,8 +71,7 @@ To test MyBatis, first install mysql in local host and use src/main/resources/in
 To create a new village, type commands as below.
 
 ```
-curl -i -X POST -H "Content-Type:application/json" -d '{"name":"panyu", "district":"guangzhou"}'
- localhost:8080/village/new
+curl -i -X POST -H "Content-Type:application/json" -d '{"name":"panyu", "district":"guangzhou"}' localhost:8080/village/new
 ```
 If everything is OK, you'd see 201 response code and the "village" object you created.
 
