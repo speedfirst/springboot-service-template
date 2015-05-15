@@ -1,4 +1,4 @@
-package hello;
+package app;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -18,7 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = HelloApplication.class)
+@SpringApplicationConfiguration(classes = AppConfig.class)
 @WebAppConfiguration
 @IntegrationTest({"server.port=0"})
 public class HelloControllerITest {
