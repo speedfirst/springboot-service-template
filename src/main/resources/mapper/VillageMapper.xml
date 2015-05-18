@@ -16,4 +16,9 @@
         SELECT vid, name, district FROM village WHERE vid = #{vid}
     </select>
 
+    <insert id="insertVillage" parameterType="model.Village" flushCache="true" statementType="PREPARED"
+            useGeneratedKeys="true" keyProperty="vid" timeout="20">
+        INSERT INTO village(name, district) VALUES(#{name}, #{district})
+    </insert>
+
 </mapper>
