@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [RPC Service Template](#rpc-service-template)
+- [How to Run](#how-to-run)
+- [Jetty](#jetty)
+- [DB Connection](#db-connection)
+- [MyBatis Integration](#mybatis-integration)
+- [Logging](#logging)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 RPC Service Template
 ======================================
 
