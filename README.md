@@ -161,16 +161,12 @@ public String index(HttpServletRequest req) {
 In pom.xml, maven-docker-plugin is used to generate docker image.
 
 ```xml
-	<properties>
-		<docker.image.prefix>reg.frontnode.net</docker.image.prefix>
-		<docker.image.tag>latest</docker.image.tag>
-	</properties>
+<properties>
+	<docker.image.prefix>reg.frontnode.net</docker.image.prefix>
+	<docker.image.tag>latest</docker.image.tag>
+</properties>
 <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
       		<plugin>
             	<groupId>com.spotify</groupId>
             	<artifactId>docker-maven-plugin</artifactId>
@@ -194,7 +190,7 @@ In pom.xml, maven-docker-plugin is used to generate docker image.
 To build a docker image, first create the `Dockerfile` under `src/main/docker`. Normally it should copy the generated jar and run `java -jar app.jar`. Then run 
 
 ```
-mvn docker:run
+mvn docker:build
 ```
 
 It should take a while to pull the necessary layers. After it succeeds, you should see it in the result of `docker images`.
