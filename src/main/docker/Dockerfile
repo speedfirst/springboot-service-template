@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:8u45
 VOLUME /tmp
 ADD service-template-0.0.1-SNAPSHOT.jar app.jar
 RUN bash -c 'touch /app.jar'
