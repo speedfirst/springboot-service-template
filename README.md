@@ -113,3 +113,36 @@ curl localhost:8080/village/1
 
 Note the 404 error if you provided some not existed vid.
 
+# Logging
+We're using slf4j as the logging interface while logback as the logging backend.
+
+When logging is not configured, the log is outputed to STDOUT.
+
+For simple logging, specify "logging.file" or "logging.path" properties in `application.properties` file to specify where to output log, see [here](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-logging.html#boot-features-custom-log-configuration).
+
+For customized logging configuration, create `logback.xml` somewhere and set its path to "logging.config" properties.
+
+```
+logging.config=classpath:config/logback.xml
+```
+
+Go [here](http://logback.qos.ch/manual/configuration.html) for logback configuration syntax explanations.
+
+> Please ensure the log file is written to disk if you configure a file log appender. If not, it may be due to the file permission problem.
+
+A typical logging java code looks like:
+
+
+```java
+private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+@RequestMapping("/")
+public String index(HttpServletRequest req) {
+    logger.info("Request to / coming from {}", req.getRemoteAddr());
+    return "Hello, this is a web app based on springboot\n";
+}
+```
+
+
+
+
