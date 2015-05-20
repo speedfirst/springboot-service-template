@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mapper.VillageMapper">
+<mapper namespace="app.mapper.VillageMapper">
 
 
-    <resultMap id="Blog_result" type="model.Village" >
+    <resultMap id="Blog_result" type="app.model.Village" >
         <id column="vid" property="vid" />
         <result column="name" property="name"/>
         <result column="district" property="district"/>
@@ -16,7 +16,7 @@
         SELECT vid, name, district FROM village WHERE vid = #{vid}
     </select>
 
-    <insert id="insertVillage" parameterType="model.Village" flushCache="true" statementType="PREPARED"
+    <insert id="insertVillage" parameterType="app.model.Village" flushCache="true" statementType="PREPARED"
             useGeneratedKeys="true" keyProperty="vid" timeout="20">
         INSERT INTO village(name, district) VALUES(#{name}, #{district})
     </insert>

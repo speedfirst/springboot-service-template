@@ -1,6 +1,6 @@
-package mapper;
+package app.mapper;
 
-import model.Village;
+import app.model.Village;
 
 /**
  * Created by jiankuan on 15/5/15.

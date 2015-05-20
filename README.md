@@ -7,6 +7,7 @@
 - [Jetty](#jetty)
 - [DB Connection](#db-connection)
 - [MyBatis Integration](#mybatis-integration)
+- [MongoDB Integration](#mongodb-integration)
 - [Logging](#logging)
 - [Docker Image Build](#docker-image-build)
 
@@ -127,6 +128,67 @@ curl localhost:8080/village/1
 
 Note the 404 error if you provided some not existed vid.
 
+# MongoDB Integration
+To enable mongo support, add the following dependency to the project.
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+```
+Create a model class, whose name should be same (except the initial capital letter) to the collection name in mongo. For example, there is a collection name "book", then create a class "Book". Fill all the necessary fields, and mark `@org.springframework.data.annotation.Id` to the filed which will be mapped to "_id" field in mongo document (or called "row" in mongo collection).
+
+```java
+public class Book {
+    @Id
+    public String _id;
+
+    public int id;
+
+    public String name;
+
+    public double price;
+}
+```
+
+After that, create a Repository interface which extends MongoRepository.
+
+```java
+public interface BookRepository extends MongoRepository<Book, Integer> {
+
+   Book findBookByName(String name);
+}
+```
+
+The base MongoRepository has defined a batch of CRUD methods that could be used. You can
+add more by some rules whchi can be identified by the converter, like "findBookByName".
+It will be translated to command `db.book.find({"name": "xxx"})` in mongo shell.
+
+Then mark `@EnableMongoRepository` in the main config class (or specify mongo repository
+in application context xml file). This will enable springboot to auto detect all "mongo 
+repository interfaces" and dynamic construct proxy classes.
+
+Finally, specify the host name, port and database name in `pplication.properties` file.
+
+```
+# mongo
+spring.data.mongodb.host=localhost
+spring.data.mongodb.port=27017
+spring.data.mongodb.database=local
+```
+
+Start the project and have a try.
+
+```
+# get a book by name
+curl localhost:8080/book/mydoc
+
+# insert a new book
+curl -X POST -H 'Content-Type:application/json' -d '{"id": 10, "name": "zero to one", "price" : 31.25}' localhost:8080/book/new
+
+```
+
 # Logging
 We're using slf4j as the logging interface while logback as the logging backend.
 
@@ -156,6 +218,7 @@ public String index(HttpServletRequest req) {
     return "Hello, this is a web app based on springboot\n";
 }
 ```
+
 # Docker Image Build
 
 In pom.xml, maven-docker-plugin is used to generate docker image.

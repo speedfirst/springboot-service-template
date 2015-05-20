@@ -1,8 +1,8 @@
-package controller;
+package app.controller;
 
-import exception.NotFoundException;
-import mapper.VillageMapper;
-import model.Village;
+import app.exception.NotFoundException;
+import app.mapper.VillageMapper;
+import app.model.Village;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;

@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -17,8 +18,9 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("controller")
-@MapperScan("mapper")  // scan mappers for mybatis
+@ComponentScan({"app.controller"})
+@MapperScan("app.mapper") // scan mappers for mybatis
+@EnableMongoRepositories
 public class AppConfig {
 
     @Autowired
