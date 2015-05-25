@@ -1,2 +1,1 @@
-docker_image=reg.frontnode.net/service-template
-docker_tag=latest
+DockerImageVersion=reg.frontnode.net/service-template:latest
