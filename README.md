@@ -9,6 +9,7 @@
 - [MyBatis Integration](#mybatis-integration)
 - [MongoDB Integration](#mongodb-integration)
 - [Logging](#logging)
+   - [DBAppender](#DBAppender)
 - [Docker Image Build](#docker-image-build)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -217,6 +218,65 @@ public String index(HttpServletRequest req) {
     logger.info("Request to / coming from {}", req.getRemoteAddr());
     return "Hello, this is a web app based on springboot\n";
 }
+```
+
+## DBAppender
+
+Sometimes you want to append business logs to database for backtrace. You can easily configure
+this in logback.xml.
+
+First add DBAppender and business logger in `logback.xml` file.
+
+```xml
+<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
+    <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+        <dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <driverClass>com.mysql.jdbc.Driver</driverClass>
+            <jdbcUrl>jdbc:mysql://localhost:3306/biz_log</jdbcUrl>
+            <user>root</user>
+            <password></password>
+        </dataSource>
+    </connectionSource>
+</appender>
+
+
+<logger name="biz" level="INFO" additivity="false">
+    <appender-ref ref="DB"/>
+</logger>
+```
+
+Note here we're using c3p0 pooled datasource to improve performance. Otherwise, the average
+delay of log writing may be 10+ ms so thus the TPS will only be ~100. To make it work, remember to add c3p0 in the dependencies of `pom.xml`.
+
+```xml
+<dependency>
+    <groupId>com.mchange</groupId>
+    <artifactId>c3p0</artifactId>
+    <version>0.9.5</version>
+</dependency>
+```
+> Tomcat conneciton pool should work too here. But I can't find a configuring sample for it.
+
+Before using the DBAppender, do create the database and tables. logback won't create it for you. [src/main/resources/init-logback-mysql.sql](src/main/resources/init-logback-mysql.sql) is the script to create tables. For scripts of creating tables for other databases, you can find
+them [here](https://github.com/qos-ch/logback/tree/master/logback-classic/src/main/resources/ch/qos/logback/classic/db/script).
+
+Then logging the content as usual by the logger name starting with "biz".
+
+```java
+private Logger bizLogger = LoggerFactory.getLogger("biz.hello");
+//...
+bizLogger.info("hello is invoked from {}", req.getRemoteAddr());
+```
+
+Finally you will see the logs in `logging_event` table.
+
+```
+MySQL [biz_log]> select timestmp, formatted_message, logger_name, level_string, caller_class from logging_event;
++---------------+---------------------------------+-------------+--------------+--------------------------------+
+| timestmp      | formatted_message               | logger_name | level_string | caller_class                   |
++---------------+---------------------------------+-------------+--------------+--------------------------------+
+| 1432630075323 | hello is invoked from 127.0.0.1 | biz.hello   | INFO         | app.controller.HelloController |
++---------------+---------------------------------+-------------+--------------+--------------------------------+
 ```
 
 # Docker Image Build

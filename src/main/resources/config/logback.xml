@@ -14,6 +14,22 @@
         </encoder>
     </appender>
 
+    <!-- comment out this appender and logger for db log outputing -->
+    <!-- <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">-->
+        <!--<connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">-->
+            <!--<dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+                <!--<driverClass>com.mysql.jdbc.Driver</driverClass>-->
+                <!--<jdbcUrl>jdbc:mysql://localhost:3306/biz_log</jdbcUrl>-->
+                <!--<user>root</user>-->
+                <!--<password></password>-->
+            <!--</dataSource>-->
+        <!--</connectionSource>-->
+    <!--</appender>-->
+
+    <!--<logger name="biz" level="INFO" additivity="false">-->
+        <!--<appender-ref ref="DB"/>-->
+    <!--</logger>-->
+
     <root level="INFO">
 <!--        <appender-ref ref="FILE" />  -->
         <appender-ref ref="STDOUT" />
