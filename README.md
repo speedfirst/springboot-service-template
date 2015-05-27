@@ -7,6 +7,7 @@
 - [Jetty](#jetty)
 - [DB Connection](#db-connection)
 - [MyBatis Integration](#mybatis-integration)
+   - [Multiple Datasources and Mappers Configuration](#multiple-datasources-and-mappers-configuration)
 - [MongoDB Integration](#mongodb-integration)
 - [Logging](#logging)
    - [DBAppender](#DBAppender)
@@ -128,6 +129,121 @@ curl localhost:8080/village/1
 ```
 
 Note the 404 error if you provided some not existed vid.
+
+## Multiple Datasources and Mappers Configuration
+> To see the sample code, checkout to git branch "multi-datasources".
+
+You may use more than one data source (as well as SessionFactory instances). To do this
+you have to disable Springboot's auto data source configuration by excluding them from
+`@EnableAutoConfiguration`.
+
+```java
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class})
+public class AppConfig {
+    // ...
+}
+```
+
+Suppose you have two sets of data source properties in `application.properties`, one has prefix "app.village.ds", while another has "app.city.ds".
+
+```
+# data source configuration 1
+app.village.ds.url=jdbc:mysql://localhost:3306/village
+app.village.ds.username=root
+app.village.ds.password=
+app.village.ds.max-active=200
+app.village.ds.max-idle=10
+app.village.ds.min-idle=10
+app.village.ds.initial-size=15
+app.village.ds.validation-query=select 1
+
+# data source configuration 2
+app.city.ds.url=jdbc:mysql://localhost:3306/city
+app.city.ds.username=root
+app.city.ds.password=
+app.city.ds.max-active=200
+app.city.ds.max-idle=10
+app.city.ds.min-idle=10
+app.city.ds.initial-size=15
+app.city.ds.validation-query=select 1
+```
+
+With them you can easily create two datasources bean in `AppConfig`.
+
+```java
+@Bean
+@ConfigurationProperties(prefix = "app.village.ds")
+public DataSource dataSource1( ) {
+    return DataSourceBuilder.create().build();
+}
+
+@Bean
+@ConfigurationProperties(prefix = "app.city.ds")
+public DataSource dataSource2( ) {
+    return DataSourceBuilder.create().build();
+}
+```
+> Note if not specified bean name, the method name is used for bean name. Thus here defines
+> two beans with name "dataSource1" and "DataSource 2".
+
+> Note, do not use `@Primary` in the on, otherwise all the references marked with
+> `@Autowired` will *ONLY* use the bean of `@Primary` instead of autowiring by bean name.
+
+Then inject 2 data sources into 2 session factories.
+
+```java
+@Bean(name = "sqlSessionFactory1")
+@Autowired
+@Qualifier("dataSource1")
+public SqlSessionFactory sqlSessionFactory1(DataSource dataSource1) throws Exception {
+    SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+    sessionFactory.setDataSource(dataSource1);
+    return sessionFactory.getObject();
+}
+
+@Bean(name = "sqlSessionFactory2")
+@Autowired
+@Qualifier("dataSource2")
+public SqlSessionFactory sqlSessionFactory2(DataSource dataSource2) throws Exception {
+    SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+    sessionFactory.setDataSource(dataSource2);
+    return sessionFactory.getObject();
+}
+```
+
+> Note use `@Autowired` to inject the data source beans into the methods. Do not directly
+> invoke like this `sessionFactory.setDataSource(dataSource1())`. This is because 
+> `dataSource1()` is marked with `@ConfigurationProperties` which takes effect to
+> the result of `dataSource1()`. If you directly use `dataSource1()` method, you will get
+> a data source object with empty url, username, password, ...
+
+After that, defines two `MapperScannerConfigurer` beans. Note here you need specify the
+session factory bean *name*, instead of their references. Meanwhile, define the package
+where you want to search mapper interfaces and mapper xml configurations. You don not
+need `@MapperScan` annotation anymore.
+
+```java
+@Bean
+public MapperScannerConfigurer mapperScannerConfigurer1() {
+    MapperScannerConfigurer configurer = new MapperScannerConfigurer();
+    configurer.setBasePackage("app.mapper.ds1");
+    configurer.setSqlSessionFactoryBeanName("sqlSessionFactory1");
+    return configurer;
+}
+
+@Bean
+public MapperScannerConfigurer mapperScannerConfigurer2() {
+    MapperScannerConfigurer configurer = new MapperScannerConfigurer();
+    configurer.setBasePackage("app.mapper.ds2");
+    configurer.setSqlSessionFactoryBeanName("sqlSessionFactory2");
+    return configurer;
+}
+```
+
+Finally, create `VillageMapper` interface and `VillageMapper.xml` in package `app.mapper.ds1`;
+`CityMapper` interface and `CityMapper.xml` in `app.mapper.ds2`. And autowire the mappers in
+somewhere you want to use.
+
 
 # MongoDB Integration
 To enable mongo support, add the following dependency to the project.
