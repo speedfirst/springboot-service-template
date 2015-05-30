@@ -6,19 +6,25 @@ APP_NAME=${project.build.finalName}
 # docker image name MUST be lower case
 IMAGE_NAME=`echo $DOCKER_REGISTRY/app/$APP_NAME | tr [:upper:] [:lower:]`
 
-function build() {
-    echo 'building docker image [$IMAGE_NAME]'
-    docker build -t $IMAGE_NAME ${project.build.directory}
+function build {
+    echo 'building docker image [$1]'
+    docker build -t $1 ${project.build.directory}
 }
 
-function push() {
-    echo 'pushing docker image [$IMAGE_NAME] to [$DOCKER_REGISTRY]'
+function push {
+    echo 'pushing docker image [$1] to [$2]'
     docker push $IMAGE_NAME
 }
 
 # do the build
-build
+build $IMAGE_NAME
 
+if [ $? != 0 ]; then
+    echo 'build docker image failed, exit'
+    exit -1
+fi
+
+# push the image
 if [ x$1 != 'x--no-push' ]; then
-    push
+    push $IMAGE_NAME $DOCKER_REGISTRY
 fi
