@@ -27,4 +27,6 @@ fi
 # push the image
 if [ x$1 != 'x--no-push' ]; then
     push $IMAGE_NAME $DOCKER_REGISTRY
+else
+    echo --no-push is specified, docker push ignored
 fi
