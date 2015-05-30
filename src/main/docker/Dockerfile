@@ -4,8 +4,8 @@ WORKDIR /app
 VOLUME /app/log
 VOLUME /app/conf
 
-ADD ${project.build.finalName}.jar /app
-ADD start-springboot-app.sh /app
+ADD ${project.build.finalName}.jar /app/
+ADD start-springboot-app.sh /app/
 
 # 5005 is assumed to be the java remote debug port if enabled
 # 5055 is assumed to be the JMX port if enabled
