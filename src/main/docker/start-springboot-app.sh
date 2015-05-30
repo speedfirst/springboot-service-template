@@ -35,6 +35,9 @@ JAVA_OPTS="$JAVA_OPTS $JAVA_GCLOG_OPTS"
 if [ "x$APP_DEBUG" != "x" ]; then
     # debug port must be 5005
     JAVA_DEBUG_OPTS="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n"
+fi
+
+if [ "x$JAVA_DEBUG_OPTS" != "x" ]; then
     JAVA_OPTS="$JAVA_OPTS $JAVA_DEBUG_OPTS"
 fi
 
@@ -44,6 +47,9 @@ if [ "x$APP_JMX" != "x" ]; then
     JAVA_JMX_OPTS="-Dcom.sun.management.jmxremote.port=5055 \
                    -Dcom.sun.management.jmxremote.authenticate=false \
                    -Dcom.sun.management.jmxremote.ssl=false"
+fi
+
+if [ "x$JAVA_JMX_OPTS" != "x" ]; then
     JAVA_OPTS="$JAVA_OPTS $JAVA_JMX_OPTS"
 fi
 
