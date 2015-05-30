@@ -47,7 +47,7 @@ if [ "x$APP_JMX" != "x" ]; then
     JAVA_OPTS="$JAVA_OPTS $JAVA_JMX_OPTS"
 fi
 
-RUN_CMD="java $JAVA_OPTS -jar app.jar"
+RUN_CMD="java $JAVA_OPTS -jar /app/app.jar"
 
 if [ "x$APP_OPTS" != "x" ]; then
     RUN_CMD="$RUN_CMD $APP_OPTS"
