@@ -28,7 +28,7 @@ if [ "x$JAVA_GCLOG_OPTS" = "x" ]; then
                      -Xloggc:log/gc.log \
                      -XX:+UseGCLogFileRotation \
                      -XX:NumberOfGCLogFiles=10 \
-                     -XX:GCLogFileSize=100Mm"
+                     -XX:GCLogFileSize=100m"
 fi
 JAVA_OPTS="$JAVA_OPTS $JAVA_GCLOG_OPTS"
 
