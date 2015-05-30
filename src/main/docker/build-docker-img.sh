@@ -7,13 +7,13 @@ APP_NAME=${project.build.finalName}
 IMAGE_NAME=`echo $DOCKER_REGISTRY/app/$APP_NAME | tr [:upper:] [:lower:]`
 
 function build {
-    echo 'building docker image [$1]'
+    echo "building docker image [$1]"
     docker build -t $1 ${project.build.directory}
 }
 
 function push {
-    echo 'pushing docker image [$1] to [$2]'
-    docker push $IMAGE_NAME
+    echo "pushing docker image [$1] to [$2]"
+    docker push $1
 }
 
 # do the build
