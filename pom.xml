@@ -16,6 +16,9 @@
         <java.version>1.8</java.version>
         <docker.image.prefix>reg.frontnode.net</docker.image.prefix>
         <docker.image.tag>latest</docker.image.tag>
+
+        <!-- server.port will be automatically inject into springboot's application.properties and Dockerfile -->
+        <server.port>8080</server.port>
     </properties>
 
     <!-- Inherit defaults from Spring Boot -->
