@@ -6,7 +6,7 @@ APP_NAME=${project.build.finalName}
 # docker image name MUST be lower case
 IMAGE_NAME=$(echo $DOCKER_REGISTRY/app/$APP_NAME | tr [:upper:] [:lower:])
 
-function build {
+function build () {
     echo "building docker image [$1]"
     docker build -t $1 ${project.build.directory}
 }
