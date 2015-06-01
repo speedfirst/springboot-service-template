@@ -1,4 +1,7 @@
 #!/bin/sh
+
+JAR_FILE=${project.build.finalName}.jar
+
 APP_NAME=${project.name}
 
 if [ "x$JAVA_COMMON_OPTS" = "x" ]; then
@@ -53,7 +56,7 @@ if [ "x$JAVA_JMX_OPTS" != "x" ]; then
     JAVA_OPTS="$JAVA_OPTS $JAVA_JMX_OPTS"
 fi
 
-RUN_CMD="java $JAVA_OPTS -jar /app/${project.build.finalName}.jar"
+RUN_CMD="java $JAVA_OPTS -jar $JAR_FILE $@"
 
 if [ "x$APP_OPTS" != "x" ]; then
     RUN_CMD="$RUN_CMD $APP_OPTS"
