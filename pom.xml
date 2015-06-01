@@ -138,6 +138,7 @@
                     <doUpdate>false</doUpdate>
                     <shortRevisionLength>8</shortRevisionLength>
                     <revisionOnScmFailure>true</revisionOnScmFailure>
+                    <timestampFormat>{0,date,yyyyMMddHHmmssSSS}</timestampFormat>
                 </configuration>
             </plugin>
             <plugin>
