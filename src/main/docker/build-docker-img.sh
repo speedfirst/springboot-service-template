@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DOCKER_REGISTRY=reg.frontnode.net
 APP_NAME=${project.build.finalName}
