@@ -8,6 +8,7 @@
 - [DB Connection](#db-connection)
 - [MyBatis Integration](#mybatis-integration)
    - [Multiple Datasources and Mappers Configuration](#multiple-datasources-and-mappers-configuration)
+- [Redis Integration](#redis-integration)
 - [MongoDB Integration](#mongodb-integration)
 - [Logging](#logging)
    - [DBAppender](#DBAppender)
@@ -15,7 +16,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-RPC Service Template
+Springboot RPC Service Template
 ======================================
 
 A service code template based on springboot, jetty and mybatis etc.
@@ -244,6 +245,92 @@ Finally, create `VillageMapper` interface and `VillageMapper.xml` in package `ap
 `CityMapper` interface and `CityMapper.xml` in `app.mapper.ds2`. And autowire the mappers in
 somewhere you want to use.
 
+# Redist Integration
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-redis</artifactId>
+</dependency>
+```
+
+This will auto inject `RedisConnectionFactory` and `StringRedisTemplate` bean, which you can
+inject directly to your application.
+
+```java
+@RestController
+public class PhoneController {
+
+    @Autowired
+    private void setRedisTemplate(StringRedisTemplate redisTemplate) {
+        kvOps = redisTemplate.opsForValue();
+        hashOps = redisTemplate.opsForHash();
+        listOps = redisTemplate.opsForList();
+    }
+
+    private ValueOperations<String, String> kvOps;
+
+    private HashOperations<String, String, String> hashOps;
+
+    private ListOperations<String, String> listOps;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @RequestMapping(method = RequestMethod.GET, value="/phone/{id}")
+    public Phone getPhone(@PathVariable String id) throws IOException {
+        String value = kvOps.get("phone:" + id);
+        if (value == null) {
+            throw new NotFoundException();
+        }
+
+        Phone phone = mapper.readValue(value, Phone.class);
+        return phone;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value="/phone/new", consumes = "application/json")
+    public HttpEntity<Phone> createPhone(@RequestBody Phone phone) throws JsonProcessingException {
+        String value = mapper.writeValueAsString(phone);
+        kvOps.set("phone:" + phone.id, value);
+        listOps.rightPush("phones", value);
+        return new ResponseEntity<>(phone, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value="/phones")
+    public List<Phone> listPhones() throws IOException {
+        List<String> values = listOps.range("phones", 0, -1);
+        List<Phone> phones = new ArrayList<>(values.size());
+        for (String value: values) {
+            phones.add(mapper.readValue(value, Phone.class));
+        }
+        return phones;
+    }
+}
+```
+
+> Note here `StringRedisTemplate` is a redis client assuming that the value of redis is simply
+> string, to "GenericStringSerializer" is used here. In this case, we use json to serialize 
+> the object. You can customize your dedicated `RedisTemplate` bean in `AppConfig` by
+> specifying serializer (see [here](http://stackoverflow.com/questions/27521672/how-autowired-redistemplatestring-long) for an example).
+
+To configure redis, set following properties in `application.properties`:
+
+```
+spring.redis.database=0
+spring.redis.host=localhost
+spring.redis.password=
+spring.redis.port=6379
+spring.redis.pool.max-idle=8
+spring.redis.pool.min-idle=0
+spring.redis.pool.max-active=8
+spring.redis.pool.max-wait=-1
+```
+
+The redis pool also supports sentinel if you add following properties.
+
+```
+spring.redis.sentinel.master= # name of Redis server
+spring.redis.sentinel.nodes= # comma-separated list of host:port pairs
+```
 
 # MongoDB Integration
 To enable mongo support, add the following dependency to the project.
