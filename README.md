@@ -245,7 +245,7 @@ Finally, create `VillageMapper` interface and `VillageMapper.xml` in package `ap
 `CityMapper` interface and `CityMapper.xml` in `app.mapper.ds2`. And autowire the mappers in
 somewhere you want to use.
 
-# Redist Integration
+# Redis Integration
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
